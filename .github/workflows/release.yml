@@ -1,0 +1,71 @@
+name: Release Debian package
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate release tag
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          python3 - <<'PY'
+          import os, re, tomllib
+          version = tomllib.load(open('Cargo.toml', 'rb'))['package']['version']
+          tag = os.environ['RELEASE_TAG']
+          if not re.fullmatch(r'v\d+\.\d+\.\d+', tag) or tag != f'v{version}':
+              raise SystemExit('Release requires a stable vX.Y.Z tag matching Cargo.toml')
+          PY
+  checks:
+    needs: version
+    uses: ./.github/workflows/check.yml
+    permissions:
+      contents: read
+  publish:
+    needs: checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: rust-boot-manager-debian12
+          path: artifacts
+      - name: Prepare verified release assets
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          version="${RELEASE_TAG#v}"
+          mkdir release
+          package="rust-boot-manager_${version}_amd64.deb"
+          test "$(dpkg-deb -f "artifacts/$package" Version)" = "$version"
+          test "$(dpkg-deb -f "artifacts/$package" Architecture)" = amd64
+          cp "artifacts/$package" release/
+          git archive --format=tar.gz --prefix="rust-boot-manager-${version}/" \
+            -o "release/rust-boot-manager-${version}-source.tar.gz" HEAD
+          (cd release && sha256sum ./*.deb ./*.tar.gz > SHA256SUMS)
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          # Upload all assets before making the release public. Failed uploads
+          # leave a draft that can be retried, rather than an incomplete release.
+          if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --verify-tag --draft \
+              --title "Rust Boot Manager $RELEASE_TAG" --generate-notes
+          fi
+          test "$(gh release view "$RELEASE_TAG" --json isDraft --jq .isDraft)" = true
+          gh release upload "$RELEASE_TAG" release/* --clobber
+          gh release edit "$RELEASE_TAG" --draft=false

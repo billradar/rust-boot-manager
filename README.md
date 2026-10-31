@@ -184,3 +184,20 @@ DESTDIR=/tmp/rbm-stage scripts/uninstall.sh
 提供 amd64 静态 musl 通用包，Rust CLI 不依赖 Debian 13 的 glibc。GUI 继续使用目标系统的 Python 3 / GTK 3。其他 CPU 架构可本机构建；aarch64 的 musl 构建入口已提供，但本次仅实际验证 amd64。
 
 Debian 12、Ubuntu 22.04 和 Ubuntu 24.04 使用同一个通用包进行容器安装与 CLI/GTK/会话客户端检查，Debian 13 另有本机只读测试。容器不代表实际重启、固件写入、各桌面托盘或其他派生发行版已完成硬件验收。具体结果见 `docs/TESTING.md` 和 `dist/compat-*.log`。
+
+## 自动发布（CD）
+
+GitHub Actions 在推送 `vX.Y.Z` 标签后发布 GitHub Release。标签版本必须与
+`Cargo.toml` 一致。发布前运行 Debian 12 / 13、Ubuntu 22.04 / 24.04 的完整 CI；
+任一检查失败均不发布。通过后复用 Debian 12 任务已测试的静态 musl amd64 安装包，
+同时上传当前提交的源码归档和 `SHA256SUMS`。所有附件上传成功后才公开 Release。
+无需配置个人访问令牌，只有发布任务获得仓库内容写权限。
+
+```sh
+# 先更新 Cargo.toml / Cargo.lock 中的版本并提交、推送
+git tag -a v0.5.0 -m 'Release v0.5.0'
+git push origin v0.5.0
+```
+
+首次运行若失败，修正问题后应使用新版本标签；仅临时上传故障可在 Actions 中重跑，
+流程允许补全尚未公开的草稿，不覆盖已经公开的 Release。
