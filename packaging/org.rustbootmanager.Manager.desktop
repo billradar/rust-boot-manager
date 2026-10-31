@@ -1,0 +1,28 @@
+[Desktop Entry]
+Type=Application
+NoDisplay=true
+Name=Rust Boot Manager
+Name[zh_CN]=Rust 启动管理器
+Comment=Select the next boot target safely
+Comment[zh_CN]=选择下次启动的系统
+Exec=/usr/bin/rbm gui
+Icon=rust-boot-manager
+Terminal=false
+StartupWMClass=rust-boot-manager
+Categories=System;
+Actions=Windows;Tray;Cancel;
+
+[Desktop Action Tray]
+Name=Open in system tray
+Name[zh_CN]=启动系统托盘
+Exec=/usr/bin/rbm gui --tray
+
+[Desktop Action Cancel]
+Name=Cancel scheduled restart
+Name[zh_CN]=取消计划重启
+Exec=/usr/bin/rbm cancel
+
+[Desktop Action Windows]
+Name=Start Windows
+Name[zh_CN]=启动 Windows
+Exec=/usr/bin/rbm windows

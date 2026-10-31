@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Windows 11</title>
+  <desc>Blue four-pane Windows mark for the one-time Windows boot shortcut.</desc>
+  <g fill="#0078d4">
+    <path d="M20 20h102v102H20z"/>
+    <path d="M134 20h102v102H134z"/>
+    <path d="M20 134h102v102H20z"/>
+    <path d="M134 134h102v102H134z"/>
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN" "http://www.freedesktop.org/standards/PolicyKit/1.0/policyconfig.dtd">
+<policyconfig>
+ <vendor>Rust Boot Manager</vendor>
+ <action id="org.rustbootmanager.manage">
+  <description>Manage boot targets and scheduled restarts</description>
+  <description xml:lang="zh_CN">管理启动目标与延迟重启</description>
+  <message>Administrator authorization is required to manage boot settings.</message>
+  <message xml:lang="zh_CN">管理启动配置需要管理员授权。</message>
+  <defaults><allow_any>no</allow_any><allow_inactive>no</allow_inactive><allow_active>auth_admin</allow_active></defaults>
+  <annotate key="org.freedesktop.policykit.exec.path">/usr/libexec/rust-boot-manager-helper</annotate>
+ </action>
+</policyconfig>

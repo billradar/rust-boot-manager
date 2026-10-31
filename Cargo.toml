@@ -1,0 +1,18 @@
+[package]
+name = "rust-boot-manager"
+version = "0.5.0"
+edition = "2021"
+rust-version = "1.85"
+license = "MIT"
+description = "Debian-family GRUB boot selector with a polkit privilege boundary"
+
+[[bin]]
+name = "rbm"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"

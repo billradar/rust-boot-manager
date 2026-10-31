@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Service
+MimeType=inode/directory;
+Actions=BootManager;
+X-KDE-Priority=TopLevel
+X-KDE-ServiceTypes=KonqPopupMenu/Plugin
+[Desktop Action BootManager]
+Name=Boot Manager
+Name[zh_CN]=启动管理器
+Icon=rust-boot-manager
+Exec=/usr/bin/rbm gui

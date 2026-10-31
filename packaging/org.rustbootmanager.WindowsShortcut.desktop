@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+NoDisplay=true
+Name=Start Windows
+Name[zh_CN]=启动 Windows
+Comment=Confirm a Windows restart, optionally making Windows the default
+Comment[zh_CN]=确认启动 Windows，可选择以后每次默认启动 Windows
+Exec=/usr/bin/rbm windows
+Icon=rust-boot-manager-windows11
+Terminal=false
+StartupWMClass=rust-boot-manager-windows11
+Categories=System;
+StartupNotify=true
